@@ -18,4 +18,5 @@ variable "organization" {
 variable "image" {
   description = "Container image for the container-image-exporter"
   type        = string
+  default     = "ghcr.io/ribbybibby/container-image-exporter"
 }

@@ -29,20 +29,13 @@ And access to these images in your Chainguard organization:
 
 Execute these steps from this directory.
 
-1. Build and push the image.
-
-```
-export IMAGE=ttl.sh/container-image-exporter-${RANDOM}:24h
-docker build --push --platform=linux/amd64,linux/arm64 -t ${IMAGE} ../..
-```
-
-2. Create a `kind` cluster.
+1. Create a `kind` cluster.
 
 ```
 kind create cluster
 ```
 
-3. Create a `.tfvars` file. The token this creates is valid for an hour.
+2. Create a `.tfvars` file. The token this creates is valid for an hour.
 
 ```
 cat <<EOF > terraform.tfvars
@@ -51,14 +44,14 @@ organization = "org-name"
 EOF
 ```
 
-4. Apply the terraform module.
+3. Apply the terraform module.
 
 ```
 terraform init
-terraform apply -var-file=terraform.tfvars -var image=${IMAGE}
+terraform apply -var-file=terraform.tfvars
 ```
 
-5. Port forward Grafana. Login at `localhost:3000` with the user `admin` and the
+4. Port forward Grafana. Login at `localhost:3000` with the user `admin` and the
    password `prom-operator`.
 
 ```
