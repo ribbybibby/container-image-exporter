@@ -101,7 +101,7 @@ spec:
       serviceAccountName: container-image-exporter
       containers:
       - name: controller
-        image: ${IMAGE}
+        image: ghcr.io/ribbybibby/container-image-exporter
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080

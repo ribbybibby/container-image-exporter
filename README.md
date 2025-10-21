@@ -7,7 +7,7 @@ Export information about container images configured in a Kubernetes cluster.
 The default static configuration can be installed as follows:
 
 ```
-IMAGE=<image url> envsubst < ./deploy/manifests/container-image-exporter.yaml | kubectl apply -f -
+kubectl apply -f https://raw.githubusercontent.com/ribbybibby/container-image-exporter/refs/heads/main/deploy/manifests/container-image-exporter.yaml
 ```
 
 The service is annotated with these values, which are commonly used to discover
