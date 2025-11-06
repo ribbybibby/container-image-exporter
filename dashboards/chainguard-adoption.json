@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 0,
+  "id": 29,
   "links": [],
   "panels": [
     {
@@ -74,7 +74,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.2.0",
+      "pluginVersion": "12.2.1",
       "targets": [
         {
           "datasource": {
@@ -148,7 +148,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.2.0",
+      "pluginVersion": "12.2.1",
       "targets": [
         {
           "datasource": {
@@ -192,8 +192,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 10,
-        "w": 15,
+        "h": 9,
+        "w": 24,
         "x": 0,
         "y": 8
       },
@@ -225,7 +225,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.2.0",
+      "pluginVersion": "12.2.1",
       "targets": [
         {
           "datasource": {
@@ -270,9 +270,9 @@
       },
       "gridPos": {
         "h": 10,
-        "w": 9,
-        "x": 15,
-        "y": 8
+        "w": 13,
+        "x": 0,
+        "y": 17
       },
       "id": 6,
       "options": {
@@ -302,7 +302,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.2.0",
+      "pluginVersion": "12.2.1",
       "targets": [
         {
           "datasource": {
@@ -321,6 +321,83 @@
         }
       ],
       "title": "Chainguard Containers % By Main Package",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "The number of container images in the cluster with a specific value for 'dev.chainguard.image.title'.\n\nThis corresponds to the name of the image in the Chainguard catalog.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 11,
+        "x": 13,
+        "y": 17
+      },
+      "id": 8,
+      "options": {
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "count by (value) (\n      container_image_container_info{kind=~\"$kind\"}\n    * on (digest) group_left (value)\n        container_image_label{key=\"dev.chainguard.image.title\",value!=\"\"}\n)\n",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "{{value}}",
+          "range": false,
+          "refId": "B"
+        }
+      ],
+      "title": "Chainguard Containers % By Image Title",
       "type": "piechart"
     },
     {
@@ -389,7 +466,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 27
       },
       "id": 4,
       "options": {
@@ -409,7 +486,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.2.0",
+      "pluginVersion": "12.2.1",
       "targets": [
         {
           "editorMode": "code",
@@ -479,7 +556,7 @@
         "h": 9,
         "w": 16,
         "x": 0,
-        "y": 27
+        "y": 36
       },
       "id": 1,
       "options": {
@@ -492,7 +569,7 @@
           }
         ]
       },
-      "pluginVersion": "12.2.0",
+      "pluginVersion": "12.2.1",
       "targets": [
         {
           "datasource": {
@@ -625,7 +702,7 @@
         "h": 9,
         "w": 8,
         "x": 16,
-        "y": 27
+        "y": 36
       },
       "id": 7,
       "options": {
@@ -638,7 +715,7 @@
           }
         ]
       },
-      "pluginVersion": "12.2.0",
+      "pluginVersion": "12.2.1",
       "targets": [
         {
           "datasource": {
@@ -746,5 +823,5 @@
   "timezone": "browser",
   "title": "Chainguard Adoption",
   "uid": "85b97197-750c-4e8a-aeef-a3b8fc303331",
-  "version": 4
+  "version": 1
 }

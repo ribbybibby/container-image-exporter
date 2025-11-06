@@ -96,6 +96,8 @@ spec:
 See [dashboards](./dashboards) for examples of Grafana dashboards that consume
 the exporter's metrics.
 
+![dashboard](images/dashboard.png)
+
 ## Demo
 
 See [demo](./demo) for a demonstration of how to use this exporter to track
