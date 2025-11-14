@@ -37,6 +37,7 @@ var (
 	probeAddr     string
 	cacheDuration time.Duration
 	platform      string
+	k8sKeychain   bool
 )
 
 var rootCmd = &cobra.Command{
@@ -69,6 +70,7 @@ var rootCmd = &cobra.Command{
 		if err = controller.SetupControllers(
 			mgr,
 			controller.WithCacheDuration(cacheDuration),
+			controller.WithK8sKeychain(k8sKeychain),
 			controller.WithPlatform(p),
 		); err != nil {
 			return fmt.Errorf("setting up controllers: %w", err)
@@ -90,6 +92,7 @@ func init() {
 	rootCmd.Flags().StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
 	rootCmd.Flags().StringVar(&platform, "platform", "linux/amd64", "The default platform to resolve multi-arch images to.")
 	rootCmd.Flags().DurationVar(&cacheDuration, "cache-duration", 1*time.Hour, "How long to cache image details for before querying the registry again.")
+	rootCmd.Flags().BoolVar(&k8sKeychain, "k8s-keychain", true, "Whether to fetch credentials from pulls secrets in the cluster.")
 }
 
 func main() {

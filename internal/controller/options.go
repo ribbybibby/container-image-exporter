@@ -10,6 +10,7 @@ import (
 type Option func(*options)
 
 type options struct {
+	k8sKeychain   bool
 	cacheDuration time.Duration
 	platform      *v1.Platform
 }
@@ -23,6 +24,14 @@ func WithCacheDuration(d time.Duration) Option {
 			return
 		}
 		o.cacheDuration = d
+	}
+}
+
+// WithK8sKeychain is a functional option that configures whether the controller
+// will fetch credentials from pull secrets in the cluster
+func WithK8sKeychain(k8sKeychain bool) Option {
+	return func(o *options) {
+		o.k8sKeychain = k8sKeychain
 	}
 }
 

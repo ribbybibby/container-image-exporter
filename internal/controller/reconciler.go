@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"math/rand"
 	"strings"
 	"time"
@@ -14,9 +15,14 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
+	"github.com/awslabs/amazon-ecr-credential-helper/ecr-login"
+	"github.com/chrismellard/docker-credential-acr-env/pkg/credhelper"
+	"github.com/google/go-containerregistry/pkg/authn"
 	k8schain "github.com/google/go-containerregistry/pkg/authn/kubernetes"
+	kauth "github.com/google/go-containerregistry/pkg/authn/kubernetes"
 	"github.com/google/go-containerregistry/pkg/name"
 	v1 "github.com/google/go-containerregistry/pkg/v1"
+	"github.com/google/go-containerregistry/pkg/v1/google"
 	"github.com/google/go-containerregistry/pkg/v1/remote"
 	"github.com/google/go-containerregistry/pkg/v1/types"
 )
@@ -48,6 +54,7 @@ type ContainerImageReconciler struct {
 	Cache            ContainerImageCache
 	CacheDuration    time.Duration
 	Platform         *v1.Platform
+	K8sKeychain      bool
 }
 
 // Reconcile reconciles objects that define containers
@@ -66,6 +73,12 @@ func (r *ContainerImageReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	obj.SetGroupVersionKind(r.GroupVersionKind)
 	if err := r.Client.Get(ctx, req.NamespacedName, obj); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
+	}
+
+	// Construct a keychain for retrieving credentials
+	kc, err := r.newKeychain(ctx, obj)
+	if err != nil {
+		return ctrl.Result{}, fmt.Errorf("constructing keychain: %w", err)
 	}
 
 	// Construct a keychain which uses the pull secrets attached to the object
@@ -173,6 +186,39 @@ func (r *ContainerImageReconciler) getImage(ctx context.Context, imgRef string, 
 	}
 
 	return cimg, nil
+}
+
+var (
+	amazonKeychain authn.Keychain = authn.NewKeychainFromHelper(ecr.NewECRHelper(ecr.WithLogger(io.Discard)))
+	azureKeychain  authn.Keychain = authn.NewKeychainFromHelper(credhelper.NewACRCredentialsHelper())
+)
+
+func (r *ContainerImageReconciler) newKeychain(ctx context.Context, obj *unstructured.Unstructured) (authn.Keychain, error) {
+	// Fetch credentials from ~/.docker/config.json and any ambient cloud credentials
+	// configured in the environment
+	keychains := []authn.Keychain{
+		authn.DefaultKeychain,
+		google.Keychain,
+		amazonKeychain,
+		azureKeychain,
+	}
+
+	// If enabled, construct a keychain which uses the pull secrets
+	// attached to the object and the object's service account.
+	if r.K8sKeychain {
+		opts := k8schain.Options{
+			Namespace:          obj.GetNamespace(),
+			ServiceAccountName: serviceAccountName(obj),
+			ImagePullSecrets:   imagePullSecrets(obj),
+		}
+		k8s, err := kauth.New(ctx, r.KubeClient, kauth.Options(opts))
+		if err != nil {
+			return nil, fmt.Errorf("constructing k8s keychain: %w", err)
+		}
+		keychains = append([]authn.Keychain{k8s}, keychains...)
+	}
+
+	return authn.NewMultiKeychain(keychains...), nil
 }
 
 func getImage(desc *remote.Descriptor, platform *v1.Platform) (v1.Image, error) {

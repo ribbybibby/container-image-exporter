@@ -94,6 +94,7 @@ func SetupControllers(mgr ctrl.Manager, opts ...Option) error {
 			Cache:            cache,
 			CacheDuration:    o.cacheDuration,
 			Platform:         o.platform,
+			K8sKeychain:      o.k8sKeychain,
 		}
 		if err := ctrl.NewControllerManagedBy(mgr).For(resource.Object).Complete(reconciler); err != nil {
 			return fmt.Errorf("unable to create controller for %s: %w", resource.GroupVersionKind, err)

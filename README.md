@@ -109,7 +109,10 @@ adoption of Chainguard Containers.
 
 The exporter will attempt to fetch registry credentials from any pull secrets
 configured for the target resources, in the same way that the kubelet would
-when running a pod.
+when running a pod. If you don't want to grant the exporter permissions to
+read secrets across the cluster, you can disable this behaviour with
+`--k8s-keychain=false` and remove the references to secrets and service accounts
+for the cluster role.
 
 Additionally, it will use any available cloud-specific credentials that are
 configured for the `container-image-inventory` pod when interacting with
