@@ -115,12 +115,12 @@ read secrets across the cluster, you can disable this behaviour with
 for the cluster role.
 
 Additionally, it will use any available cloud-specific credentials that are
-configured for the `container-image-inventory` pod when interacting with
+configured for the `container-image-exporter` pod when interacting with
 Google Container Registry, Google Artifact Registry, AWS ECR or Azure
 Container Registry.
 
 You can also modify the contents of the
-`container-image-inventory-docker-config` secret to add static credentials for
+`container-image-exporter-docker-config` secret to add static credentials for
 other registries.
 
 ### Cache Duration
